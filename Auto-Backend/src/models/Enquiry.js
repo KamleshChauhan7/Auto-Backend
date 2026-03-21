@@ -18,11 +18,11 @@ const Enquiry = seanebDB.define(
             onDelete: "CASCADE",
             allowNull: false
         },
-        car_id: {
+        vehicle_id: {
             type: DataTypes.UUID,
             references: {
-                model: "cars",
-                key: "car_id"
+                model: "vehicles",
+                key: "vehicle_id"
             },
             onDelete: "CASCADE",
             allowNull: false
@@ -31,8 +31,9 @@ const Enquiry = seanebDB.define(
             type: DataTypes.TEXT,
             allowNull: true
         },
-        Status: {
+        status: {
             type: DataTypes.STRING(20),
+            defaultValue: "NEW",
             validate: {
                 isIn: [['NEW', 'RESPONDED', 'CLOSED']]
             },
@@ -41,12 +42,20 @@ const Enquiry = seanebDB.define(
 
     },
     {
-        tableName:"enquiry",
+        tableName: "enquiry",
         timestamps: true,
         createdAt: "created_at",
         updatedAt: "updated_at",
+        paranoid: true,
+        indexes: [
+            { fields: ["user_id"] },
+            { fields: ["vehicle_id"] },
+            { fields: ["status"] },
 
-        paranoid: true
+            { fields: ["created_at"] },
+
+            { fields: ["user_id", "vehicle_id"] }
+        ]
     }
 )
 

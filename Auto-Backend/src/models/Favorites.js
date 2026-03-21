@@ -17,14 +17,14 @@ const favorites = seanebDB.define(
                 model: "users",
                 key: "user_id"
             },
-            onDelete:"CASCADE"
+            onDelete: "CASCADE"
         },
-        car_id:{
-            type:DataTypes.UUID,
-            allowNull:false,
-            references:{
-                model:"cars",
-                key:"car_id"
+        vehicle_id: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+                model: "vehicles",
+                key: "vehicle_id"
             }
         }
     },
@@ -32,8 +32,15 @@ const favorites = seanebDB.define(
         timestamps: true,
         createdAt: "created_at",
         updatedAt: "updated_at",
-
-        paranoid: true
+        paranoid: true,
+        indexes: [
+            {
+                unique: true,
+                fields: ["user_id", "vehicle_id"]
+            },
+            { fields: ["user_id"] },
+            { fields: ["vehicle_id"] }
+        ]
     }
 )
 

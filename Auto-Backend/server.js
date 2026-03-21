@@ -5,8 +5,6 @@ import app from './app.js';
 import "./src/models/index.js";
 import seanebDB from './src/config/db.js';
 
-import { swaggerUi, swaggerSpec } from "./src/config/swagger.js";
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
 const PORT = process.env.PORT || 8001;
@@ -17,7 +15,9 @@ const startServer = async () => {
         await seanebDB.authenticate();
 
         if (process.env.NODE_ENV !== "production") {
-            await seanebDB.sync({ alter: true });
+            await seanebDB.sync({ force: true });
+            // await seanebDB.sync();
+
         }
         app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
@@ -27,7 +27,6 @@ const startServer = async () => {
     } catch (error) {
 
         console.log("Unable to start server",error);
-
 
     }
 }

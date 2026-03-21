@@ -16,39 +16,46 @@ const Ratings = seanebDB.define(
                 key: "user_id"
             },
             allowNull: false,
-            unique:true,
             onDelete: "CASCADE"
         },
-        branch_id:{
-            type:DataTypes.UUID,
-            references:{
-                model:"branches",
-                key:"branch_id"
+        branch_id: {
+            type: DataTypes.UUID,
+            references: {
+                model: "branches",
+                key: "branch_id"
             },
-            unique:true,
-            allowNull:false,
-            onDelete:"CASCADE"
+            allowNull: false,
+            onDelete: "CASCADE"
         },
-        rating:{
-            type:DataTypes.INTEGER,
-            allowNull:false,
-            validate:{
-                min:1,
-                max:5
+        rating: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            validate: {
+                min: 1,
+                max: 5
             }
         },
-        review:{
-            type:DataTypes.TEXT,
-            allowNull:true,
+        review: {
+            type: DataTypes.TEXT,
+            allowNull: true,
         }
 
     },
     {
-        tableName:"ratings",
-        timestamps:true,
-        createdAt:"created_at",
-        updatedAt:"updated_At",
-        paranoid:true
+        tableName: "ratings",
+        timestamps: true,
+        createdAt: "created_at",
+        updatedAt: "updated_at",
+        paranoid: true,
+        indexes: [
+            {
+                unique: true,
+                fields: ["user_id", "branch_id"]
+            },
+            { fields: ["user_id"] },
+            { fields: ["branch_id"] },
+            { fields: ["rating"] }
+        ]
     }
 )
 

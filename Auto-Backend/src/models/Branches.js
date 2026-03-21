@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize";
 import seanebDB from "../config/db.js";
 
-const Branch = seanebDB.define(
-  "branch",
+const Branches = seanebDB.define(
+  "branches",
   {
     branch_id: {
       type: DataTypes.UUID,
@@ -27,7 +27,10 @@ const Branch = seanebDB.define(
     timestamps: true,
     createdAt: "created_at",
     updatedAt: "updated_at",
+    indexes: [
+      { fields: ["status"] }
+    ]
   }
 );
 
-export default Branch;
+export default Branches;

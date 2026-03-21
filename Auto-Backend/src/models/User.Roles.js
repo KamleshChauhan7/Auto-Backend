@@ -37,17 +37,28 @@ const User_Roles = seanebDB.define(
             onDelete: "CASCADE"
 
         },
-        product_id:{
-            type:DataTypes.UUID,
-            allowNull:false
+        product_id: {
+            type: DataTypes.UUID,
+            allowNull: false
         }
     },
     {
         tableName: "user_roles",
-        timestamps:true,
-        createdAt:"created_at",
-        updatedAt:"updated_at",
-        paranoid:true
+        timestamps: true,
+        createdAt: "created_at",
+        updatedAt: "updated_at",
+        paranoid: true,
+        indexes: [
+            { fields: ["user_id"] },
+            { fields: ["branch_id"] },
+            { fields: ["role_id"] },
+            { fields: ["product_id"] },
+
+            {
+                unique: true,
+                fields: ["user_id", "branch_id", "role_id", "product_id"]
+            }
+        ]
 
     }
 );

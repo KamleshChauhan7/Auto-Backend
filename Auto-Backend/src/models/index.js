@@ -1,120 +1,185 @@
-import seanebDB from "../config/db.js";
-import Branch from "./Branch.js"
+import sequelize from "../config/db.js";
+
+// Import all models
+import Branches from "./Branches.js";
 import User from "./User.js";
-import Plan_Master from "./Plan.Master.js";
-import Opted_Plan from "./Opted.Plan.js";
-import Car from "./Car.js"
+import Vehicle from "./Vehicles.js";
+import VehicleCategory from "./Vehicle.Category.js";
+import VehicleBrand from "./Vehicle.Brand.js";
+import VehicleFuelType from "./Vehicle.Fuel.Type.js";
+import VehicleModel from "./Vehicle.Models.js";
+import VehicleImages from "./Vehicle.Images.js";
+
 import Enquiry from "./Enquiry.js";
-import favorites from "./Favorites.js";
+import Favorites from "./Favorites.js";
 import Ratings from "./Ratings.js";
 import Notification from "./Notification.js";
+
+import PlanMaster from "./Plan.Master.js";
+import OptedPlan from "./Opted.Plan.js";
 import Invoice from "./Invoice.js";
-import Car_Images from "./Car.Images.js";
+
 import Roles from "./Roles.js";
-import User_Roles from "./User.Roles.js";
 import Permissions from "./Permissions.js";
-import Role_Permissions from "./Role.Permissions.js";
-import Car_Model from "./Car.Models.js";
-import Car_Brand from "./Car.Brand.js";
-import CarFuelType from "./Car.Fuel.Type.js";
+import RolePermissions from "./Role.Permissions.js";
+import UserRoles from "./User.Roles.js";
 
-// Branch Relations
-Branch.hasMany(Car,{foreignKey:"branch_id",onDelete:"CASCADE"});
-Car.belongsTo(Branch,{foreignKey:"branch_id"});
+import UserVehicle from "./User.Vehicle.js";
+import UserVehicleDealer from "./User.Vehicle.Dealer.js";
 
-Branch.hasMany(Car_Images,{foreignKey:"branch_id"});
-Car_Images.belongsTo(Branch,{foreignKey:"branch_id"});
-
-Branch.hasMany(Ratings,{foreignKey:"branch_id"});
-Ratings.belongsTo(Branch,{foreignKey:"branch_id"});
-
-Branch.hasMany(Invoice,{foreignKey:"branch_id"});
-Invoice.belongsTo(Branch,{foreignKey:"branch_id"});
-
-Branch.hasMany(Opted_Plan,{foreignKey:"branch_id"});
-Opted_Plan.belongsTo(Branch,{foreignKey:"branch_id"});
-
-Branch.hasMany(User_Roles,{foreignKey:"branch_id"});
-User_Roles.belongsTo(Branch,{foreignKey:"branch_id"});
+// Branch -- Vehicles
+Branches.hasMany(Vehicle, { foreignKey: "branch_id" });
+Vehicle.belongsTo(Branches, { foreignKey: "branch_id" });
 
 
-// Car Relations
-
-Car.hasMany(Car_Images,{foreignKey:"car_id",onDelete:"CASCADE"});
-Car_Images.belongsTo(Car,{foreignKey:"car_id"});
-
-Car.hasMany(Enquiry,{foreignKey:"car_id"});
-Enquiry.belongsTo(Car,{foreignKey:"car_id"});
-
-Car.hasMany(Notification,{foreignKey:"car_id"});
-Notification.belongsTo(Car,{foreignKey:"car_id"});
-
-Car.hasMany(Invoice,{foreignKey:"car_id"});
-Invoice.belongsTo(Car,{foreignKey:"car_id"});
-
-Car.hasOne(Opted_Plan,{foreignKey:"car_id"});
-Opted_Plan.belongsTo(Car,{foreignKey:"car_id"});
-
-// User Relations
-
-User.hasMany(Enquiry,{foreignKey:"user_id"});
-Enquiry.belongsTo(User,{foreignKey:"user_id"});
-
-User.hasMany(Ratings,{foreignKey:"user_id"});
-Ratings.belongsTo(User,{foreignKey:"user_id"});
-
-User.hasMany(Notification,{foreignKey:"user_id"});
-Notification.belongsTo(User,{foreignKey:"user_id"});
-
-User.hasMany(Invoice,{foreignKey:"user_id"});
-Invoice.belongsTo(User,{foreignKey:"user_id"});
-
-User.hasMany(favorites,{foreignKey:"user_id"});
-favorites.belongsTo(User,{foreignKey:"user_id"});
-
-Car.hasMany(favorites,{foreignKey:"car_id"});
-favorites.belongsTo(Car,{foreignKey:"car_id"});
-
-User.belongsToMany(Roles,{through:User_Roles,foreignKey:"user_id"});
-Roles.belongsToMany(User,{through:User_Roles,foreignKey:"role_id"});
+// Vehicle Category
+VehicleCategory.hasMany(Vehicle, { foreignKey: "category_id" });
+Vehicle.belongsTo(VehicleCategory, { foreignKey: "category_id" });
 
 
-// Car Brand relations
-Car_Brand.hasMany(Car_Model,{foreignKey:"brand_id"});
-Car_Model.belongsTo(Car_Brand,{foreignKey:"brand_id"});
-
-Car_Model.hasMany(Car,{foreignKey:"model_id"});
-Car.belongsTo(Car_Model,{foreignKey:"model_id"});
-
-// Car Fuel Relations
-CarFuelType.hasMany(Car,{foreignKey:"fuel_type_id"});
-Car.belongsTo(CarFuelType,{foreignKey:"fuel_type_id"});
-
-// Plan Relations
-Plan_Master.hasMany(Opted_Plan,{foreignKey:"plan_id"});
-Opted_Plan.belongsTo(Plan_Master,{foreignKey:"plan_id"});
-
-// Role & PErmissions Relations
-Roles.belongsToMany(Permissions,{through:Role_Permissions , foreignKey:"role_id"});
-Permissions.belongsToMany(Roles,{through:Role_Permissions,foreignKey:"permission_id"});
+// Vehicle Brand --  Model
+VehicleBrand.hasMany(VehicleModel, { foreignKey: "brand_id" });
+VehicleModel.belongsTo(VehicleBrand, { foreignKey: "brand_id" });
 
 
+// Vehicle Model -- Vehicle
+VehicleModel.hasMany(Vehicle, { foreignKey: "model_id" });
+Vehicle.belongsTo(VehicleModel, { foreignKey: "model_id" });
+
+
+// Fuel Type
+VehicleFuelType.hasMany(Vehicle, { foreignKey: "fuel_type_id" });
+Vehicle.belongsTo(VehicleFuelType, { foreignKey: "fuel_type_id" });
+
+
+// Vehicle Images
+Vehicle.hasMany(VehicleImages, { foreignKey: "vehicle_id" });
+VehicleImages.belongsTo(Vehicle, { foreignKey: "vehicle_id" });
+
+
+// Enquiry
+User.hasMany(Enquiry, { foreignKey: "user_id" });
+Enquiry.belongsTo(User, { foreignKey: "user_id" });
+
+Vehicle.hasMany(Enquiry, { foreignKey: "vehicle_id" });
+Enquiry.belongsTo(Vehicle, { foreignKey: "vehicle_id" });
+
+
+// Favorites
+User.hasMany(Favorites, { foreignKey: "user_id" });
+Favorites.belongsTo(User, { foreignKey: "user_id" });
+
+Vehicle.hasMany(Favorites, { foreignKey: "vehicle_id" });
+Favorites.belongsTo(Vehicle, { foreignKey: "vehicle_id" });
+
+
+// Ratings
+User.hasMany(Ratings, { foreignKey: "user_id" });
+Ratings.belongsTo(User, { foreignKey: "user_id" });
+
+Branches.hasMany(Ratings, { foreignKey: "branch_id" });
+Ratings.belongsTo(Branches, { foreignKey: "branch_id" });
+
+
+// Notifications
+User.hasMany(Notification, { foreignKey: "user_id" });
+Notification.belongsTo(User, { foreignKey: "user_id" });
+
+Vehicle.hasMany(Notification, { foreignKey: "vehicle_id" });
+Notification.belongsTo(Vehicle, { foreignKey: "vehicle_id" });
+
+
+// Plan -- OptedPlan
+PlanMaster.hasMany(OptedPlan, { foreignKey: "plan_id" });
+OptedPlan.belongsTo(PlanMaster, { foreignKey: "plan_id" });
+
+Vehicle.hasMany(OptedPlan, { foreignKey: "vehicle_id" });
+OptedPlan.belongsTo(Vehicle, { foreignKey: "vehicle_id" });
+
+
+// Invoice
+Vehicle.hasMany(Invoice, { foreignKey: "vehicle_id" });
+Invoice.belongsTo(Vehicle, { foreignKey: "vehicle_id" });
+
+User.hasMany(Invoice, { foreignKey: "user_id" });
+Invoice.belongsTo(User, { foreignKey: "user_id" });
+
+OptedPlan.hasMany(Invoice, { foreignKey: "opted_plan_id" });
+Invoice.belongsTo(OptedPlan, { foreignKey: "opted_plan_id" });
+
+
+// Role -- Permission (Many-to-Many)
+Roles.belongsToMany(Permissions, {
+  through: RolePermissions,
+  foreignKey: "role_id",
+});
+Permissions.belongsToMany(Roles, {
+  through: RolePermissions,
+  foreignKey: "permission_id",
+});
+
+
+// User -- Role (with branch + product context)
+User.hasMany(UserRoles, { foreignKey: "user_id" });
+UserRoles.belongsTo(User, { foreignKey: "user_id" });
+
+Branches.hasMany(UserRoles, { foreignKey: "branch_id" });
+UserRoles.belongsTo(Branches, { foreignKey: "branch_id" });
+
+Roles.hasMany(UserRoles, { foreignKey: "role_id" });
+UserRoles.belongsTo(Roles, { foreignKey: "role_id" });
+
+
+// User -- UserVehicle
+User.hasMany(UserVehicle, { foreignKey: "user_id" });
+UserVehicle.belongsTo(User, { foreignKey: "user_id" });
+
+// Vehicle -- UserVehicle
+Vehicle.hasMany(UserVehicle, { foreignKey: "vehicle_id" });
+UserVehicle.belongsTo(Vehicle, { foreignKey: "vehicle_id" });
+
+// UserVehicle -- Dealer mapping
+UserVehicle.hasMany(UserVehicleDealer, { foreignKey: "user_vehicle_id" });
+UserVehicleDealer.belongsTo(UserVehicle, { foreignKey: "user_vehicle_id" });
+
+// Branch -- Dealer mapping
+Branches.hasMany(UserVehicleDealer, { foreignKey: "branch_id" });
+UserVehicleDealer.belongsTo(Branches, { foreignKey: "branch_id" });
 
 export {
-    seanebDB,
-    Branch,
-    User,
-    Plan_Master,
-    Car,
-    Opted_Plan,
-    Enquiry,
-    favorites,
-    Ratings,
-    Notification,
-    Invoice,
-    Car_Images,
-    Roles,
-    User_Roles,
-    Permissions,
-    Role_Permissions
+  sequelize,
+
+  // Core
+  Branches,
+  User,
+
+  // Vehicles
+  Vehicle,
+  VehicleCategory,
+  VehicleBrand,
+  VehicleFuelType,
+  VehicleModel,
+  VehicleImages,
+
+  // User actions
+  Enquiry,
+  Favorites,
+  Ratings,
+  Notification,
+
+  // Plans & billing
+  PlanMaster,
+  OptedPlan,
+  Invoice,
+
+  // RBAC
+  Roles,
+  Permissions,
+  RolePermissions,
+  UserRoles,
+
+  UserVehicleDealer,
+  UserVehicle
+
+
 };

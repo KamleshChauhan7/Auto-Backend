@@ -2,10 +2,10 @@ import { DataTypes, STRING } from "sequelize";
 import seanebDB from "../config/db.js";
 
 
-const Car = seanebDB.define(
-    "car",
+const Vehicle = seanebDB.define(
+    "vehicles",
     {
-        car_id: {
+        vehicle_id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true
@@ -22,11 +22,19 @@ const Car = seanebDB.define(
             type: DataTypes.UUID,
             allowNull: false,
             references: {
-                model: "car_models",
+                model: "vehicle_models",
                 key: "model_id"
             }
         },
-        car_register_number: {
+        category_id: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+                model: "vehicle_category",
+                key: "category_id"
+            }
+        },
+        vehicle_register_number: {
             type: DataTypes.STRING(15),
             unique: true,
             allowNull: false
@@ -51,14 +59,17 @@ const Car = seanebDB.define(
             allowNull: false
         },
         price: {
-            type: DataTypes.INTEGER,
-            allowNull: false
+            type: DataTypes.DECIMAL(12, 2),
+            allowNull: false,
+            validate: {
+                min: 1
+            }
         },
         fuel_type_id: {
             type: DataTypes.UUID,
             allowNull: false,
             references: {
-                model: "car_fuel_type",
+                model: "vehicle_fuel_type",
                 key: "fuel_type_id"
             }
         },
@@ -68,11 +79,17 @@ const Car = seanebDB.define(
         },
         km_driven: {
             type: DataTypes.INTEGER,
-            allowNull: true
+            allowNull: true,
+            validate: {
+                min: 1
+            }
         },
         ownership_count: {
             type: DataTypes.INTEGER,
-            allowNull: true
+            allowNull: true,
+            validate: {
+                min: 1
+            }
         },
         drive_type: {
             type: DataTypes.STRING(20),
@@ -104,11 +121,25 @@ const Car = seanebDB.define(
         timestamps: true,
         createdAt: "created_at",
         updatedAt: "updated_at",
+        paranoid: true,
+        indexes: [
+            { fields: ["branch_id"] },
+            { fields: ["model_id"] },
+            { fields: ["category_id"] },
+            { fields: ["fuel_type_id"] },
 
-        paranoid: true
+            { fields: ["price"] },
+            { fields: ["year"] },
+
+            { fields: ["created_at"] },
+
+            // Advanced search optimization
+            { fields: ["branch_id", "category_id"] },
+            { fields: ["category_id", "price"] },
+        ]
     }
 
 )
 
 
-export default Car;
+export default Vehicle;

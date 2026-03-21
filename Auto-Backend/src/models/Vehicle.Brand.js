@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize";
 import seanebDB from "../config/db.js";
 
-const Car_Brand = seanebDB.define(
-    "car_brands",
+const Vehicle_Brand = seanebDB.define(
+    "vehicle_brands",
     {
         brand_id:{
             type:DataTypes.UUID,
@@ -16,12 +16,17 @@ const Car_Brand = seanebDB.define(
         }
     },
     {
-        tableName:"car_brands",
+        tableName:"vehicle_brands",
         timestamps:true,
         createdAt:"created_at",
-        updatedAt:"updated_at"
+        updatedAt:"updated_at",
+        indexes:[
+            {
+                fields:["brand_name"]
+            }
+        ]
     }
 )
 
 
-export default Car_Brand;
+export default Vehicle_Brand;

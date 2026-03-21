@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize";
 import seanebDB from "../config/db.js";
 
-const Car_Model = seanebDB.define(
-    "car_models",
+const Vehicle_Model = seanebDB.define(
+    "vehicle_models",
     {
         model_id: {
             type: DataTypes.UUID,
@@ -12,23 +12,27 @@ const Car_Model = seanebDB.define(
         brand_id: {
             type: DataTypes.UUID,
             references: {
-                model: "car_brands",
+                model: "vehicle_brands",
                 key: "brand_id"
             },
             allowNull: false,
             onDelete: "CASCADE"
         },
-        model_name:{
-            type:DataTypes.STRING(50),
-            allowNull:false
+        model_name: {
+            type: DataTypes.STRING(50),
+            allowNull: false
         }
     },
     {
-        tableName:"car_models",
-        timestamps:true,
-        createdAt:"created_at",
-        updatedAt:"updated_at"
+        tableName: "vehicle_models",
+        timestamps: true,
+        createdAt: "created_at",
+        updatedAt: "updated_at",
+        indexes: [
+            { fields: ["brand_id"] },
+            { fields: ["model_name"] }
+        ]
     }
 );
 
-export default Car_Model;
+export default Vehicle_Model;

@@ -12,8 +12,12 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:3000/api/v1",
-        description: "Local server",
+        url:process.env.NODE_ENV === "production" 
+        ? "https://auto.seaneb.com"
+        : "http://localhost:3000/api/v1",
+        description: process.env.NODE_ENV === "production" 
+        ? "API server"
+        : "Local server"
       },
     ],
   },

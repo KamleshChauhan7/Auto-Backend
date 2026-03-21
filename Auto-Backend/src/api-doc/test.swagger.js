@@ -1,19 +1,13 @@
 // API documentation using Swagger
 /**
  * @swagger
- * /api/v1/business/create:
+ * /api/v1/car/create:
  *   post:
- *     summary: Create new business
- *     tags: [Business]
+ *     summary: Add New Car
+ *     tags: [Car Listing]
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - in: header
- *         name: x-product-key
- *         required: true
- *         schema:
- *           type: string
- *         example: "seaneb"
  *     requestBody:
  *       required: true
  *       content:
@@ -21,21 +15,22 @@
  *           schema:
  *             type: object
  *             required:
- *               - business_name
- *               - display_name
+ *               - Car Registation No
  *             properties:
- *               business_name:
+ *               car_registration_number:
  *                 type: string
- *                 example: "Seaneb Technology Pvt Ltd"
- *               display_name:
+ *                 example: "GJ23GJ2332"
+ *               owner_name:
  *                 type: string
- *                 example: "Seaneb Tech"
- *               main_category_id:
+ *                 example: "SeaNeB Auto"
+ *               Description:
  *                 type: string
- *                 example: "de00ce64-1df4-4fae-a470-c0b2a564f99b"
+ *                 example: "This is second hand car"
  *     responses:
  *       201:
- *         description: Business created successfully
+ *         description: Car added successfully
  *       400:
  *         description: Validation error
+ *       401: 
+ *         description: Unathorized
  */

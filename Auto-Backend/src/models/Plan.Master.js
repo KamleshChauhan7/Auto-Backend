@@ -33,14 +33,16 @@ const Plan_Master = seanebDB.define(
     },
     {
         tableName: "plan_master",
-
         timestamps: true,
         createdAt: "created_at",
         updatedAt: "updated_at",
-
         paranoid: true,
-        deletedAt: "deleted_at"
-
+        deletedAt: "deleted_at",
+        indexes: [
+            { fields: ["plan_name"] },
+            { fields: ["is_active"] },
+            { fields: ["price"] }
+        ]
     }
 );
 
