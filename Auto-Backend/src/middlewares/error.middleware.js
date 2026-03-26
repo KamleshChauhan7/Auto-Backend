@@ -2,15 +2,21 @@ import logger from "../utils/logger.js";
 import { ERROR_CODES } from "../errors/errorCodes.js";
 
 export const errorHandler = (err, req, res, next) => {
-  let errorResponse = { ...ERROR_CODES.INTERNAL_ERROR };
 
-  // 1. Identify JSON Syntax Errors (Prevents the HTML error page)
+  let errorResponse = {
+    status: 500,
+    code: "INTERNAL_SERVER_ERROR",
+    message: "An unexpected error occurred",
+    ...ERROR_CODES?.INTERNAL_ERROR
+  };
+
+  // Identify JSON Syntax Errors
   if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
     errorResponse = ERROR_CODES.INVALID_JSON;
   }
 
-  // 2. Identify Custom ApiErrors (manually thrown by you)
-  else if (err.code && err.status) {
+  // Identify Custom ApiErrors (Using Optional Chaining to prevent crashes)
+  else if (err?.code && err?.status) {
     errorResponse = {
       status: err.status,
       code: err.code,
@@ -18,28 +24,47 @@ export const errorHandler = (err, req, res, next) => {
     };
   }
 
-  // 3. Identify Sequelize Database Errors
-  else if (err.name?.startsWith('Sequelize')) {
-    errorResponse = ERROR_CODES.DB_CONSTRAINT_ERROR;
+  // Identify Sequelize Database Errors
+  else if (err?.name?.startsWith('Sequelize')) {
+    // Default Database Error
+    errorResponse = {
+      ...ERROR_CODES.DB_CONSTRAINT_ERROR,
+      status: 400
+    };
+
+    // Masking sensitive Foreign Key/Constraint details
+    if (err.name === 'SequelizeForeignKeyConstraintError') {
+      errorResponse.message = "The referenced record (Branch or User) does not exist.";
+      errorResponse.code = "REFERENCE_NOT_FOUND";
+    }
+    else if (err.name === 'SequelizeUniqueConstraintError') {
+      // Extract the field name
+      const fieldName = err.errors?.[0]?.path || "record";
+
+      errorResponse.message = `The '${fieldName.replace(/_/g, ' ')}' you entered is already in our system.`;
+      errorResponse.code = "DUPLICATE_ENTRY";
+    }
+
+    errorResponse.details = process.env.NODE_ENV === 'development' ? err.parent?.detail || err.message : undefined;
   }
 
-  // Log the detailed error to your file system (for you to see)
   logger.error({
-    message: err.message,
+    message: err?.message || "No error message",
     code: errorResponse.code,
-    stack: err.stack,
-    path: req.originalUrl,
-    method: req.method,
+    stack: err?.stack,
+    path: req?.originalUrl,
+    method: req?.method,
   });
 
-  // 4. Send the Clean JSON Response (for the frontend to see)
-  return res.status(errorResponse.status).json({
+  // Send the Clean JSON Response
+  // Added a fallback to 500 just in case errorResponse.status is undefined
+  return res.status(errorResponse.status || 500).json({
     success: false,
     error: {
       code: errorResponse.code,
       message: errorResponse.message,
-      // Include original message only in development for easier debugging
-    //   details: process.env.NODE_ENV === 'development' ? err.message : undefined
+      // Useful for debugging Sequelize or TypeErrors in development
+      // details: process.env.NODE_ENV === 'development' ? (err?.message || errorResponse.details) : undefined
     },
   });
 };

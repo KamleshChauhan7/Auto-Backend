@@ -1,13 +1,9 @@
 import winston from 'winston';
 import 'winston-daily-rotate-file';
 import path from 'path';
-import fs from 'fs';
 
 const logDir = path.join(process.cwd(), 'public', 'logger');
 
-// if (!fs.existsSync(logDir)) {
-//   fs.mkdirSync(logDir, { recursive: true }); // make directory
-// }
 
 const filterByLevel = (level) => winston.format((info) => {
   return info.level === level ? info : false;

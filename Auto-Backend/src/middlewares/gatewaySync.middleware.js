@@ -1,51 +1,54 @@
 // src/middlewares/gatewaySync.middleware.js
 import { User, Branches } from "../models/index.js";
 import { ApiError } from "../errors/ApiError.js";
+import seanebDB from "../config/db.js";
 
 export const syncGatewayIdentity = async (req, res, next) => {
   try {
-    const incomingSecret = req.headers["x-api-secret"];
-    const userId = req.headers["x-user-id"];
-    const branchId = req.headers["x-branch-id"];
-    const productKey = req.headers["x-product-key"];
+    const incomingSecret = req.headers["x-internal-secret"] || req.headers["x-api-secret"];
+    const centralUserId = req.headers["x-user-id"];
+    const centralBranchId = req.headers["x-branch-id"];
 
-    console.log("User id=====:", userId);
-    console.log("Product key=====:", productKey);
-    console.log("Branch Id=====:", branchId);
-    console.log("incomingSecret===========:", incomingSecret);
+    // Ensure the headers exist
+    if (!centralBranchId || !centralUserId) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing x-branch-id or x-user-id headers"
+      });
+    }
 
-    // 1. Secret Key Verification
     if (incomingSecret !== process.env.AUTO_SECRET) {
-      // Using 401 instead of 500 for security errors
       return res.status(401).json({ success: false, message: "Invalid Secret" });
     }
 
-    // 2. Sync User 
-    // We must provide 'central_user_id' because it is NOT NULL 
-    const [userRecord] = await User.findOrCreate({
-      where: { user_id: userId },
-      defaults: {
-        central_user_id: userId, // Use the incoming ID as the central reference
-        Status: 'ACTIVE'
-      }
-    });
+    const t = await seanebDB.transaction();
 
-    // 3. Sync Branch 
-    // We must provide 'central_branch_id' because it is NOT NULL 
-    const [branchRecord] = await Branches.findOrCreate({
-      where: { branch_id: branchId },
-      defaults: {
-        central_branch_id: branchId,
-        Status: 'ACTIVE'
-      }
-    });
+    try {
+      // Sync User
+      const [userRecord] = await User.findOrCreate({
+        where: { central_user_id: centralUserId },
+        defaults: { central_user_id: centralUserId },
+        transaction: t
+      });
 
-    req.user = { user_id: userId };
-    req.branch = { branch_id: branchId };
+      // Sync Branch
+      const [branchRecord] = await Branches.findOrCreate({
+        where: { central_branch_id: centralBranchId },
+        defaults: { central_branch_id: centralBranchId },
+        transaction: t
+      });
 
-    next();
+      await t.commit();
+
+      req.user = { user_id: userRecord.user_id };
+      req.branch = { branch_id: branchRecord.branch_id };
+
+      next();
+    } catch (dbError) {
+      await t.rollback();
+      throw dbError;
+    }
   } catch (err) {
-    // CRITICAL: Log the error to your terminal to see the exact Sequelize validation error
     console.error("DETAILED SYNC ERROR:", err);
     next(err);
   }

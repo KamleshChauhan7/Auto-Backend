@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 // src/app.js
 app.set('trust proxy', true); // Allows Express to see the real Client IP through headers like X-Forwarded-For
 
-// app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api/v1",apiRouter);
 
 app.get('/', (req, res) => {

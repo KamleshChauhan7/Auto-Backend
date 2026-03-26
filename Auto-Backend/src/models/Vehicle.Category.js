@@ -14,6 +14,10 @@ const Vehicle_Category = seanebDB.define(
                 allowNull:false,
                 unique:true
             },
+            icon:{
+                type:DataTypes.TEXT,
+                allowNull:false
+            },
             description: {
                 type:DataTypes.TEXT,
             }
