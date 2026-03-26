@@ -1,36 +1,36 @@
-import { DataTypes } from "sequelize";
-import seanebDB from "../config/db.js";
+  import { DataTypes } from "sequelize";
+  import seanebDB from "../config/db.js";
 
-const Branches = seanebDB.define(
-  "branches",
-  {
-    branch_id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true,
-    },
-    central_branch_id: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      unique: true,
-    },
-    status: {
-      type: DataTypes.STRING(20),
-      allowNull: false,
-      defaultValue: "ACTIVE",
-      validate: {
-        isIn: [["ACTIVE", "INACTIVE", "SUSPENDED", "BLOCKED", "DELETED"]],
+  const Branches = seanebDB.define(
+    "branches",
+    {
+      branch_id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
+      central_branch_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        unique: true,
+      },
+      status: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+        defaultValue: "ACTIVE",
+        validate: {
+          isIn: [["ACTIVE", "INACTIVE", "SUSPENDED", "BLOCKED", "DELETED"]],
+        },
       },
     },
-  },
-  {
-    timestamps: true,
-    createdAt: "created_at",
-    updatedAt: "updated_at",
-    indexes: [
-      { fields: ["status"] }
-    ]
-  }
-);
+    {
+      timestamps: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
+      indexes: [
+        { fields: ["status"] }
+      ]
+    }
+  );
 
-export default Branches;
+  export default Branches;

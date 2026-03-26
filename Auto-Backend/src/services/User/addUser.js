@@ -1,8 +1,8 @@
-import { User } from "../../../models/index.js";
-import { ApiError } from "../../../errors/ApiError.js";
-import { ERROR_CODES } from "../../../errors/errorCodes.js";
+import { User } from "../../models/index.js";
+import { ApiError } from "../../errors/ApiError.js";
+import { ERROR_CODES } from "../../errors/errorCodes.js";
 
-export const addUser = async (userId) => { // 1. Added async
+export const addUser = async (userId) => { 
     try {
 
         const isExist = await User.findOne({ 

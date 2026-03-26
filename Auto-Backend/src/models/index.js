@@ -27,6 +27,8 @@ import UserRoles from "./User.Roles.js";
 import UserVehicle from "./User.Vehicle.js";
 import UserVehicleDealer from "./User.Vehicle.Dealer.js";
 
+import VehiclePermit from "./Vehicle.Permit.js";
+
 // Branch -- Vehicles
 Branches.hasMany(Vehicle, { foreignKey: "branch_id" });
 Vehicle.belongsTo(Branches, { foreignKey: "branch_id" });
@@ -146,6 +148,10 @@ UserVehicleDealer.belongsTo(UserVehicle, { foreignKey: "user_vehicle_id" });
 Branches.hasMany(UserVehicleDealer, { foreignKey: "branch_id" });
 UserVehicleDealer.belongsTo(Branches, { foreignKey: "branch_id" });
 
+//vehicle permit
+Vehicle.hasOne(VehiclePermit, { foreignKey: "vehicle_id", as: "permit_details" });
+VehiclePermit.belongsTo(Vehicle, { foreignKey: "vehicle_id" });
+
 export {
   sequelize,
 
@@ -179,7 +185,7 @@ export {
   UserRoles,
 
   UserVehicleDealer,
-  UserVehicle
+  UserVehicle,
 
-
+  VehiclePermit
 };

@@ -8,22 +8,41 @@ const options = {
     info: {
       title: "SeaNeB Auto API Documentation",
       version: "1.0.0",
-      description: "API documentation for SeaNeB Auto Server",
+      description: "API documentation for SeaNeB Auto Server. Switch servers in the dropdown below to test via Gateway or Direct port.",
     },
     servers: [
       {
-        url:process.env.NODE_ENV === "production" 
-        ? "https://auto.seaneb.com"
-        : "http://localhost:3000/api/v1",
-        description: process.env.NODE_ENV === "production" 
-        ? "API server"
-        : "Local server"
+        // Production Gateway
+        url: "https://auto.seaneb.com/gateway/auto",
+        description: "Production API Gateway"
       },
+      {
+        // Local Gateway (Port 9495) - For Add Vehicle
+        url: "http://192.168.0.115:9495",
+        description: "Local API Gateway (Port 9495)"
+      },
+      {
+        // Local Direct Server (Port 8030) - For Verify RC / Development
+        url: "http://localhost:8030/api/v1/auto",
+        description: "Local Direct Server (Port 8030)"
+      }
     ],
+    components: {
+      securitySchemes: {
+        // JWT Auth for secured user routes
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
   },
-
+  // Scans all documentation and route files
   apis: [
-    path.join(process.cwd(), "src/api-doc/**/*.js"),
+    "./src/api-doc/**/*.js",
+    "./src/routes/**/*.js",
+    "./src/controllers/**/*.js",
   ],
 };
 

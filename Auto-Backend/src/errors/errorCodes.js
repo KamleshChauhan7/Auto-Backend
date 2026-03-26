@@ -6,6 +6,22 @@ export const ERROR_CODES = {
     message: "User already exists",
   },
 
+  OWNER_MISMATCH: {
+    code: "OWNER_MISMATCH",
+    status: 422,//Unprocessable Entity :format is valid,syntax valid but business validation fail so 422
+    message: "Owner name mismatch with registered owner"
+  },
+
+  VEHICLE_NOT_VERIFIED: {
+    code: "VEHICLE_NOT_VERIFIED",
+    status: 400,
+    message: "Could not verify RC with RTO"
+  },
+  VEHICLE_NOT_FOUND: {
+    code: "VEHICLE_NOT_FOUND",
+    status: 404,
+    message: "Vehicle not found"
+  },
   SIGNUP_FAILED: {
     code: "SIGNUP_FAILED",
     status: 500,
@@ -283,57 +299,57 @@ export const ERROR_CODES = {
   },
 
   INVALID_COUNTRY: {
-  code: "INVALID_COUNTRY",
-  status: 404,
-  message: "Country not found",
-},
+    code: "INVALID_COUNTRY",
+    status: 404,
+    message: "Country not found",
+  },
 
-INVALID_STATE: {
-  code: "INVALID_STATE",
-  status: 404,
-  message: "State not found under given country",
-},
+  INVALID_STATE: {
+    code: "INVALID_STATE",
+    status: 404,
+    message: "State not found under given country",
+  },
 
-INVALID_CITY: {
-  code: "INVALID_CITY",
-  status: 404,
-  message: "City not found under given state",
-},
+  INVALID_CITY: {
+    code: "INVALID_CITY",
+    status: 404,
+    message: "City not found under given state",
+  },
 
-INVALID_AREA: {
-  code: "INVALID_AREA",
-  status: 404,
-  message: "Area not found under given city",
-},
+  INVALID_AREA: {
+    code: "INVALID_AREA",
+    status: 404,
+    message: "Area not found under given city",
+  },
 
-BUSINESS_NOT_FOUND: {
-  code: "BUSINESS_NOT_FOUND",
-  status: 404,
-  message: "Business not found",
-},
+  BUSINESS_NOT_FOUND: {
+    code: "BUSINESS_NOT_FOUND",
+    status: 404,
+    message: "Business not found",
+  },
 
-BUSINESS_NOT_REGISTERED_FOR_PRODUCT: {
-  code: "BUSINESS_NOT_REGISTERED_FOR_PRODUCT",
-  status: 403,
-  message: "This business is not registered under the selected product",
-},
+  BUSINESS_NOT_REGISTERED_FOR_PRODUCT: {
+    code: "BUSINESS_NOT_REGISTERED_FOR_PRODUCT",
+    status: 403,
+    message: "This business is not registered under the selected product",
+  },
 
-NO_BUSINESSES_IN_LOCATION: {
-  code: "NO_BUSINESSES_IN_LOCATION",
-  status: 200,
-  message:
-    "Grab opportunity! Be first to register business in this location.",
-},
+  NO_BUSINESSES_IN_LOCATION: {
+    code: "NO_BUSINESSES_IN_LOCATION",
+    status: 200,
+    message:
+      "Grab opportunity! Be first to register business in this location.",
+  },
 
-AREA_LEVEL_NOT_ALLOWED: {
-  code: "AREA_LEVEL_NOT_ALLOWED",
-  status: 403,
-  message: "Area-level business listing is not allowed for this product",
-},
+  AREA_LEVEL_NOT_ALLOWED: {
+    code: "AREA_LEVEL_NOT_ALLOWED",
+    status: 403,
+    message: "Area-level business listing is not allowed for this product",
+  },
 
-CITY_LEVEL_NOT_ALLOWED: {
-  code: "CITY_LEVEL_NOT_ALLOWED",
-  status: 403,
-  message: "City-level business listing is not allowed for this product",
-},
+  CITY_LEVEL_NOT_ALLOWED: {
+    code: "CITY_LEVEL_NOT_ALLOWED",
+    status: 403,
+    message: "City-level business listing is not allowed for this product",
+  },
 };

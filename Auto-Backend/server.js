@@ -6,7 +6,6 @@ import "./src/models/index.js";
 import seanebDB from './src/config/db.js';
 
 
-
 const PORT = process.env.PORT || 8001;
 
 const startServer = async () => {
@@ -15,11 +14,13 @@ const startServer = async () => {
         await seanebDB.authenticate();
 
         if (process.env.NODE_ENV !== "production") {
-            await seanebDB.sync({ force: true });
+            await seanebDB.sync({alter:true});
             // await seanebDB.sync();
 
         }
+        // app.listen(PORT,`0.0.0.0`, () => { sharing server in same wifi
         app.listen(PORT, () => {
+
             console.log(`Server is running on port ${PORT}`);
             console.log(`Swagger available on http://localhost:${PORT}/api-docs`);
         });

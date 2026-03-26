@@ -1,145 +1,187 @@
-import { DataTypes, STRING } from "sequelize";
+import { DataTypes } from "sequelize";
 import seanebDB from "../config/db.js";
 
+const Vehicle = seanebDB.define("vehicles", {
 
-const Vehicle = seanebDB.define(
-    "vehicles",
-    {
-        vehicle_id: {
-            type: DataTypes.UUID,
-            defaultValue: DataTypes.UUIDV4,
-            primaryKey: true
-        },
-        branch_id: {
-            type: DataTypes.UUID,
-            allowNull: false,
-            references: {
-                model: "branches",
-                key: "branch_id"
-            }
-        },
-        model_id: {
-            type: DataTypes.UUID,
-            allowNull: false,
-            references: {
-                model: "vehicle_models",
-                key: "model_id"
-            }
-        },
-        category_id: {
-            type: DataTypes.UUID,
-            allowNull: false,
-            references: {
-                model: "vehicle_category",
-                key: "category_id"
-            }
-        },
-        vehicle_register_number: {
-            type: DataTypes.STRING(15),
-            unique: true,
-            allowNull: false
-        },
-        owner_name: {
-            type: DataTypes.STRING(50),
-            allowNull: false,
-        },
-        description: {
-            type: DataTypes.TEXT,
-            allowNull: true
-        },
-        year: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            validate: {
-                min: 1900,
-            }
-        },
-        color: {
-            type: DataTypes.STRING(30),
-            allowNull: false
-        },
-        price: {
-            type: DataTypes.DECIMAL(12, 2),
-            allowNull: false,
-            validate: {
-                min: 1
-            }
-        },
-        fuel_type_id: {
-            type: DataTypes.UUID,
-            allowNull: false,
-            references: {
-                model: "vehicle_fuel_type",
-                key: "fuel_type_id"
-            }
-        },
-        transmission: {
-            type: DataTypes.STRING(25),
-            allowNull: true
-        },
-        km_driven: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-            validate: {
-                min: 1
-            }
-        },
-        ownership_count: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-            validate: {
-                min: 1
-            }
-        },
-        drive_type: {
-            type: DataTypes.STRING(20),
-            allowNull: true
-        },
-        mileage: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-        },
-        horse_power: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-        },
-        seater: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-        },
-        insurance: {
-            type: DataTypes.BOOLEAN,
-            allowNull: true,
-            defaultValue: false
-        },
-        puc: {
-            type: DataTypes.DATE,
-            allowNull: true
-        },
+    vehicle_id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true
     },
+
+    branch_id: {
+        type: DataTypes.UUID,
+        allowNull: false
+    },
+
+    brand_id: {
+        type: DataTypes.UUID,
+        allowNull: false
+    },
+
+    model_id: {
+        type: DataTypes.UUID,
+        allowNull: false
+    },
+
+    manufacturing_month_year: {
+        type: DataTypes.DATE,
+    },
+
+    category_id: {
+        type: DataTypes.UUID,
+        allowNull: false
+    },
+
+    fuel_type_id: {
+        type: DataTypes.UUID,
+        allowNull: false
+    },
+
+    reg_no: {
+        type: DataTypes.STRING(20),
+        unique: true, allowNull: false
+    },
+
+    chassis_no: {
+        type: DataTypes.STRING(50),
+        unique: true,
+        allowNull: false
+    },
+
+    engine_no: {
+        type: DataTypes.STRING(50),
+        unique: true,
+        allowNull: false
+    },
+
+    owner_name: {
+        type: DataTypes.STRING(100),
+        allowNull: false
+    }, // Official name from RC
+
+    owner_father_name: {
+        type: DataTypes.STRING(100),
+    },
+
+    owner_count: {
+        type: DataTypes.INTEGER,
+        defaultValue: 1
+    },
+
+    rc_status: {
+        type: DataTypes.STRING(20),
+        defaultValue: "ACTIVE"
+    }, // e.g., ACTIVE, SUSPENDED
+
+    registration_date: {
+        type: DataTypes.DATEONLY
+    },
+
+    rc_expiry_date:
     {
+        type: DataTypes.DATEONLY
+    },
+
+    vehicle_manufacturer_name: {
+        type: DataTypes.STRING(255)
+    },
+
+    reg_authority: {
+        type: DataTypes.STRING(100)
+    },
+
+    body_type: {
+        type: DataTypes.STRING(50)
+    }, // e.g., HATCHBACK, SUV
+
+    color: {
+        type: DataTypes.STRING(30)
+    },
+
+    seat_capacity: {
+        type: DataTypes.INTEGER
+    },
+
+    is_commercial: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
+
+    insurance_company: {
+        type: DataTypes.STRING(100)
+    },
+
+    insurance_policy_no:
+    {
+        type: DataTypes.STRING(50)
+    },
+
+    insurance_expiry: {
+        type: DataTypes.DATEONLY
+    },
+
+    pucc_no: {
+        type: DataTypes.STRING(50)
+    },
+
+    pucc_expiry: {
+        type: DataTypes.DATEONLY
+    },
+
+    financer: {
+        type: DataTypes.STRING(100)
+    },
+
+    // MAnually entered by dealer
+    price: {
+        type: DataTypes.DECIMAL(15, 2),
+        allowNull: false
+    },
+
+    km_driven: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+
+    transmission: {
+        type: DataTypes.STRING(20)
+    }, // Manual / Automatic
+
+    description: {
+        type: DataTypes.TEXT
+    },
+
+},
+    {
+        tableName: "vehicles",
         timestamps: true,
+        paranoid: true,
         createdAt: "created_at",
         updatedAt: "updated_at",
-        paranoid: true,
+        
         indexes: [
+            //  Primary Foreign Keys
             { fields: ["branch_id"] },
+            { fields: ["brand_id"] },
             { fields: ["model_id"] },
             { fields: ["category_id"] },
             { fields: ["fuel_type_id"] },
 
+            // Search Performance (New Columns)
             { fields: ["price"] },
-            { fields: ["year"] },
+            { fields: ["registration_date"] }, // Replaced 'year'
+            { fields: ["rc_status"] },
+            { fields: ["is_commercial"] },
 
+            // Date sorting
             { fields: ["created_at"] },
 
-            // Advanced search optimization
+            // Advanced filters for the Dealer Dashboard
             { fields: ["branch_id", "category_id"] },
             { fields: ["category_id", "price"] },
         ]
-    }
-
-)
-
+    
+    });
 
 export default Vehicle;
