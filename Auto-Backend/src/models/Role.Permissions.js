@@ -1,4 +1,4 @@
-import { DatabaseError, DataTypes, Deferrable } from "sequelize";
+import {  DataTypes } from "sequelize";
 import seanebDB from "../config/db.js";
 
 const Role_Permissions = seanebDB.define(

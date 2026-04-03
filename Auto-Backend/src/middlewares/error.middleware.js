@@ -41,7 +41,7 @@ export const errorHandler = (err, req, res, next) => {
       // Extract the field name
       const fieldName = err.errors?.[0]?.path || "record";
 
-      errorResponse.message = `The '${fieldName.replace(/_/g, ' ')}' you entered is already in our system.`;
+      errorResponse.message = "The Record you entered is already exist";
       errorResponse.code = "DUPLICATE_ENTRY";
     }
 

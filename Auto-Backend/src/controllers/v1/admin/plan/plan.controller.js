@@ -1,6 +1,6 @@
-import { PlanMaster } from "../../../models/index.js";
-import { ApiError } from "../../../errors/ApiError.js";
-import { ERROR_CODES } from "../../../errors/errorCodes.js";
+import { PlanMaster } from "../../../../models/index.js";
+import { ApiError } from "../../../../errors/ApiError.js";
+import { ERROR_CODES } from "../../../../errors/errorCodes.js";
 
 // Add a new Plan
 export const addPlan = async (req, res, next) => {
@@ -12,8 +12,10 @@ export const addPlan = async (req, res, next) => {
             throw new ApiError(ERROR_CODES.REQUIRED_FIELDS_MISSING);
         }
 
+        const formated_plan_name = plan_name.toLowerCase().trim();
+
         const newPlan = await PlanMaster.create({
-            plan_name,
+            plan_name:formated_plan_name,
             price,
             duration_days,
         });

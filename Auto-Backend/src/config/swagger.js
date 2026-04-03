@@ -1,51 +1,108 @@
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
-import path from "path";
 
-const options = {
-  definition: {
+export const setupSwagger = (app) => {
+  // Base Configuration for Auto Server
+  const baseDefinition = {
     openapi: "3.0.0",
     info: {
-      title: "SeaNeB Auto API Documentation",
       version: "1.0.0",
-      description: "API documentation for SeaNeB Auto Server. Switch servers in the dropdown below to test via Gateway or Direct port.",
+      description: "API documentation for SeaNeB Auto Server.",
     },
     servers: [
       {
-        // Production Gateway
-        url: "https://auto.seaneb.com/gateway/auto",
-        description: "Production API Gateway"
+        url: "http://192.168.0.156:9495",
+        description: "Remote API Gateway (Port 9495)",
       },
-      {
-        // Local Gateway (Port 9495) - For Add Vehicle
-        url: "http://192.168.0.115:9495",
-        description: "Local API Gateway (Port 9495)"
-      },
-      {
-        // Local Direct Server (Port 8030) - For Verify RC / Development
-        url: "http://localhost:8030/api/v1/auto",
-        description: "Local Direct Server (Port 8030)"
-      }
+      // {
+      //   url: "http://192.168.0.107:8030",
+      //   description: "Remote Server (Port 8030)",
+      // },
     ],
     components: {
       securitySchemes: {
-        // JWT Auth for secured user routes
         bearerAuth: {
           type: "http",
           scheme: "bearer",
           bearerFormat: "JWT",
         },
+        ProductKey: {
+          type: "apiKey",
+          in: "header",
+          name: "x-product-key",
+        },
       },
     },
-  },
-  // Scans all documentation and route files
-  apis: [
-    "./src/api-doc/**/*.js",
-    "./src/routes/**/*.js",
-    "./src/controllers/**/*.js",
-  ],
+    // Applying BOTH globally to all endpoints
+    security: [
+      {
+        bearerAuth: [],
+        ProductKey: [],
+      },
+    ],
+  };
+
+  // Generate Web Spec 
+  const webSpec = swaggerJSDoc({
+    definition: {
+      ...baseDefinition,
+      info: {
+        ...baseDefinition.info,
+        title: "SeaNeB Auto Web API Documentation",
+      },
+    },
+    apis: [
+      "./src/api-doc/web-doc/**/*.js",
+    ],
+  });
+
+  // Generate Mobile Spec 
+  const mobileSpec = swaggerJSDoc({
+    definition: {
+      ...baseDefinition,
+      info: {
+        ...baseDefinition.info,
+        title: "SeaNeB Auto Mobile API Documentation",
+      },
+    },
+    apis: [
+      "./src/api-doc/mobile-doc/**/*.js",
+    ],
+  });
+
+  // Admin Spec
+  const adminSpec = swaggerJSDoc({
+    definition: {
+      ...baseDefinition,
+      info: {
+        ...baseDefinition.info,
+        title: "SeaNeB Auto Admin API Documentation",
+      },
+    },
+    apis: [
+      "./src/api-doc/admin-doc/**/*.js",
+    ],
+  });
+
+
+  app.get("/swagger-web.json", (req, res) => res.json(webSpec));
+  app.get("/swagger-mobile.json", (req, res) => res.json(mobileSpec));
+  app.get("/swagger-admin.json",(req,res)=> res.json(adminSpec));
+
+  app.use(
+    "/api-docs",
+    swaggerUi.serve,
+    swaggerUi.setup(null, {
+      explorer: true,
+      swaggerOptions: {
+        urls: [
+          { url: "/swagger-web.json", name: "Auto Web APIs" },
+          { url: "/swagger-mobile.json", name: "Auto Mobile APIs" },
+          { url: "/swagger-admin.json",name:"Auto Admin API"}
+        ],
+        persistAuthorization: true,
+      },
+      customCss: ".swagger-ui .info a { display: none !important; } .swagger-ui .info .url { display: none !important; }",
+    })
+  );
 };
-
-const swaggerSpec = swaggerJSDoc(options);
-
-export { swaggerUi, swaggerSpec };

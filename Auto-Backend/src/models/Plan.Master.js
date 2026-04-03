@@ -12,7 +12,8 @@ const Plan_Master = seanebDB.define(
         },
         plan_name: {
             type: DataTypes.STRING(50),
-            allowNull: false
+            allowNull: false,
+            unique:true
         },
         price: {
             type: DataTypes.DECIMAL(10, 2),

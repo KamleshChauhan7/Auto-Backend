@@ -12,18 +12,17 @@ const Vehicle_Permit = seanebDB.define("vehicle_permits", {
         allowNull: false,
         unique: true, // One permit record per vehicle
         references: {
-            model: "vehicles",
+            model: "rc_vehicle_masters",
             key: "vehicle_id"
         },
         onDelete: "CASCADE"
     },
-    // --- Standard Permit Details ---
     permit_number: {
         type: DataTypes.STRING(50),
         allowNull: true
     },
     permit_type: {
-        type: DataTypes.STRING(50), // e.g., Goods Carriage, Stage Carriage
+        type: DataTypes.STRING(50), // e.g. Goods Carriage, Stage Carriage
         allowNull: true
     },
     permit_issue_date: {
@@ -38,7 +37,6 @@ const Vehicle_Permit = seanebDB.define("vehicle_permits", {
         type: DataTypes.DATEONLY,
         allowNull: true
     },
-    // --- National Permit Details ---
     national_permit_number: {
         type: DataTypes.STRING(50),
         allowNull: true
@@ -51,7 +49,6 @@ const Vehicle_Permit = seanebDB.define("vehicle_permits", {
         type: DataTypes.STRING(100),
         allowNull: true
     },
-    // --- Status Flags ---
     non_use_status: {
         type: DataTypes.STRING(50),
         allowNull: true

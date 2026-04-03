@@ -11,12 +11,19 @@ const seanebDB = new Sequelize(
 
         logging: false,
         dialectOptions: isProduction
-            ? { ssl: {
-                        require: true,
-                        rejectUnauthorized: false,
-                    },
-                }
+            ? {
+                ssl: {
+                    require: true,
+                    rejectUnauthorized: false,
+                },
+            }
             : {},
+        pool: {
+            max: 20,           // Increase maximum connections
+            min: 0,            // Minimum connections
+            acquire: 60000,    // Time (ms) to wait for a connection before throwing error
+            idle: 10000        // Time (ms) a connection can be idle before being released
+        }
     }
 );
 

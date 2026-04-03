@@ -6,6 +6,12 @@ export const ERROR_CODES = {
     message: "User already exists",
   },
 
+  INVALID_JSON: {
+    code:"INVALID_JSON",
+    status:400,
+    message:"Invalid Json"
+  },
+
   OWNER_MISMATCH: {
     code: "OWNER_MISMATCH",
     status: 422,//Unprocessable Entity :format is valid,syntax valid but business validation fail so 422
@@ -15,7 +21,13 @@ export const ERROR_CODES = {
   VEHICLE_NOT_VERIFIED: {
     code: "VEHICLE_NOT_VERIFIED",
     status: 400,
-    message: "Could not verify RC with RTO"
+    message: "Could not verify vehicle registration number"
+  },
+
+  VEHICLE_REGISTRATION_NUMBER_NOT_FOUND: {
+    code: "VEHICLE_REGISTRATION_NUMBER_NOT_FOUND",
+    status: 404,
+    message: "Vehicle registration number missing"
   },
   VEHICLE_NOT_FOUND: {
     code: "VEHICLE_NOT_FOUND",
