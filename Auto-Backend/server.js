@@ -15,11 +15,10 @@ const startServer = async () => {
 
         if (process.env.NODE_ENV !== "production") {
             await seanebDB.sync({alter:true});
-            // await seanebDB.sync();
 
         }
-        // app.listen(PORT,`0.0.0.0`, () => { sharing server in same wifi
-        app.listen(PORT, () => {
+        app.listen(PORT,`0.0.0.0`, () => { //sharing server in same wifi
+        // app.listen(PORT, () => {
 
             console.log(`Server is running on port ${PORT}`);
             console.log(`Swagger available on http://localhost:${PORT}/api-docs`);

@@ -36,7 +36,7 @@ const Invoice = seanebDB.define(
             allowNull: false
         },
         invoice_number: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING,
             allowNull: false
         },
         user_id: {
@@ -68,7 +68,6 @@ const Invoice = seanebDB.define(
             { fields: ["vehicle_id"] },
             { fields: ["user_id"] },
             { fields: ["invoice_date"] },
-            ,
             {
                 unique: true,
                 fields: ["invoice_number", "branch_id"]

@@ -1,4 +1,4 @@
-import { DataTypes, DATE } from "sequelize";
+import { DataTypes } from "sequelize";
 import seanebDB from "../config/db.js";
 
 const Ratings = seanebDB.define(

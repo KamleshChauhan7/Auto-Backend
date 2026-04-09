@@ -6,6 +6,24 @@ export const ERROR_CODES = {
     message: "User already exists",
   },
 
+  INVALID_JSON: {
+    code: "INVALID_JSON",
+    status: 400,
+    message: "Invalid Json"
+  },
+
+  PLAN_NOT_FOUND: {
+    code: "PLAN_NOT_FOUND",
+    status: 400,
+    message: "Subscription plan not found"
+  },
+
+  ORDER_NOT_FOUND:{
+    code:"ORDER_NOT_FOUND",
+    status:404,
+    message:"Order not found"
+  },
+
   OWNER_MISMATCH: {
     code: "OWNER_MISMATCH",
     status: 422,//Unprocessable Entity :format is valid,syntax valid but business validation fail so 422
@@ -15,7 +33,13 @@ export const ERROR_CODES = {
   VEHICLE_NOT_VERIFIED: {
     code: "VEHICLE_NOT_VERIFIED",
     status: 400,
-    message: "Could not verify RC with RTO"
+    message: "Could not verify vehicle registration number"
+  },
+
+  VEHICLE_REGISTRATION_NUMBER_NOT_FOUND: {
+    code: "VEHICLE_REGISTRATION_NUMBER_NOT_FOUND",
+    status: 404,
+    message: "Vehicle registration number missing"
   },
   VEHICLE_NOT_FOUND: {
     code: "VEHICLE_NOT_FOUND",
@@ -243,7 +267,12 @@ export const ERROR_CODES = {
     status: 409,
     message: "Category with this name already exists",
   },
-
+  
+  CATEGORY_NOT_EXIST: {
+    code: "CATEGORY_NOT_EXIST",
+    status: 404,
+    message: "Vehicle category not found"
+  },
   INVALID_CATEGORY: {
     code: "INVALID_CATEGORY",
     status: 400,

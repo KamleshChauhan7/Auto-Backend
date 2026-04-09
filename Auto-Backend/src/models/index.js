@@ -29,14 +29,24 @@ import UserVehicleDealer from "./User.Vehicle.Dealer.js";
 
 import VehiclePermit from "./Vehicle.Permit.js";
 
+import CreditBalance from "./CreditBalance.js";
+import PaymentTransaction from "./PaymentTransaction.js";
+
+import RcVehicleMaster from "./RcVehicleMaster.js"
+
+
+
 // Branch -- Vehicles
 Branches.hasMany(Vehicle, { foreignKey: "branch_id" });
 Vehicle.belongsTo(Branches, { foreignKey: "branch_id" });
 
+RcVehicleMaster.belongsTo(VehicleBrand, { foreignKey: "brand_id", as: "brand" });
+RcVehicleMaster.belongsTo(VehicleModel, { foreignKey: "model_id", as: "model" });
+RcVehicleMaster.belongsTo(VehicleFuelType, { foreignKey: "fuel_type_id", as: "fuel" });
+Vehicle.belongsTo(VehicleCategory, { foreignKey: "category_id", as: "category" });
 
 // Vehicle Category
 VehicleCategory.hasMany(Vehicle, { foreignKey: "category_id" });
-Vehicle.belongsTo(VehicleCategory, { foreignKey: "category_id" });
 
 
 // Vehicle Brand --  Model
@@ -45,19 +55,17 @@ VehicleModel.belongsTo(VehicleBrand, { foreignKey: "brand_id" });
 
 
 // Vehicle Model -- Vehicle
-VehicleModel.hasMany(Vehicle, { foreignKey: "model_id" });
-Vehicle.belongsTo(VehicleModel, { foreignKey: "model_id" });
+VehicleModel.hasMany(RcVehicleMaster, { foreignKey: "model_id" });
 
 
 // Fuel Type
-VehicleFuelType.hasMany(Vehicle, { foreignKey: "fuel_type_id" });
-Vehicle.belongsTo(VehicleFuelType, { foreignKey: "fuel_type_id" });
+VehicleFuelType.hasMany(RcVehicleMaster, { foreignKey: "fuel_type_id" });
+
 
 
 // Vehicle Images
-Vehicle.hasMany(VehicleImages, { foreignKey: "vehicle_id" });
+Vehicle.hasMany(VehicleImages, { foreignKey: "vehicle_id", as: "images" });
 VehicleImages.belongsTo(Vehicle, { foreignKey: "vehicle_id" });
-
 
 // Enquiry
 User.hasMany(Enquiry, { foreignKey: "user_id" });
@@ -149,8 +157,24 @@ Branches.hasMany(UserVehicleDealer, { foreignKey: "branch_id" });
 UserVehicleDealer.belongsTo(Branches, { foreignKey: "branch_id" });
 
 //vehicle permit
-Vehicle.hasOne(VehiclePermit, { foreignKey: "vehicle_id", as: "permit_details" });
-VehiclePermit.belongsTo(Vehicle, { foreignKey: "vehicle_id" });
+RcVehicleMaster.hasOne(VehiclePermit, { foreignKey: "vehicle_id", as: "permit" });
+VehiclePermit.belongsTo(RcVehicleMaster, { foreignKey: "vehicle_id" });
+
+// Branch -- Credit Balance
+Branches.hasOne(CreditBalance, { foreignKey: "branch_id" });
+CreditBalance.belongsTo(Branches, { foreignKey: "branch_id" });
+
+// Branch -- Credit Transactions
+Branches.hasMany(PaymentTransaction, { foreignKey: "branch_id" });
+PaymentTransaction.belongsTo(Branches, { foreignKey: "branch_id" });
+
+// Vehicle -- Credit Transactions (for tracking which post used which credit)
+Vehicle.hasMany(PaymentTransaction, { foreignKey: "vehicle_id" });
+PaymentTransaction.belongsTo(Vehicle, { foreignKey: "vehicle_id" });
+
+RcVehicleMaster.hasMany(Vehicle, { foreignKey: "rc_master_id", as: "listings" });
+Vehicle.belongsTo(RcVehicleMaster, { foreignKey: "rc_master_id", as: "rc_data" });
+
 
 export {
   sequelize,
@@ -166,6 +190,7 @@ export {
   VehicleFuelType,
   VehicleModel,
   VehicleImages,
+  VehiclePermit,
 
   // User actions
   Enquiry,
@@ -187,5 +212,9 @@ export {
   UserVehicleDealer,
   UserVehicle,
 
-  VehiclePermit
+  PaymentTransaction,
+  CreditBalance,
+
+  RcVehicleMaster,
+
 };

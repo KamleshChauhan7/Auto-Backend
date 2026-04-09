@@ -14,10 +14,10 @@ const Vehicle_Category = seanebDB.define(
                 allowNull:false,
                 unique:true
             },
-            icon:{
-                type:DataTypes.TEXT,
-                allowNull:false
-            },
+            // icon:{
+            //     type:DataTypes.TEXT,
+            //     allowNull:false
+            // },
             description: {
                 type:DataTypes.TEXT,
             }
@@ -25,7 +25,6 @@ const Vehicle_Category = seanebDB.define(
     {
         tableName:"vehicle_category",
         timestamps:true,
-        paranoid:true,
         indexes:[
             {
                 fields:["category_name"]

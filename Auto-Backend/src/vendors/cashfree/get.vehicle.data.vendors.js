@@ -38,6 +38,9 @@ const generateSignature = () => {
 export const fetchRCDetailsFromCashfree = async (vehicleNumber) => {
     try {
         const signature = generateSignature();
+
+        // console.log(signature);
+
         const verification_id = `rc_${Date.now()}`;
 
         // Use 'api' for Prod or 'sandbox' for testing

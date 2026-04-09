@@ -8,129 +8,25 @@ const Vehicle = seanebDB.define("vehicles", {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true
     },
-
+    
     branch_id: {
         type: DataTypes.UUID,
         allowNull: false
     },
 
-    brand_id: {
+    rc_master_id: {
         type: DataTypes.UUID,
-        allowNull: false
-    },
-
-    model_id: {
-        type: DataTypes.UUID,
-        allowNull: false
-    },
-
-    manufacturing_month_year: {
-        type: DataTypes.DATE,
+        allowNull: false,
+        references: {
+            model: "rc_vehicle_masters",
+            key: "vehicle_id"
+        },
+        onDelete: "RESTRICT" // Prevent deleting RC data if a listing exists
     },
 
     category_id: {
         type: DataTypes.UUID,
         allowNull: false
-    },
-
-    fuel_type_id: {
-        type: DataTypes.UUID,
-        allowNull: false
-    },
-
-    reg_no: {
-        type: DataTypes.STRING(20),
-        unique: true, allowNull: false
-    },
-
-    chassis_no: {
-        type: DataTypes.STRING(50),
-        unique: true,
-        allowNull: false
-    },
-
-    engine_no: {
-        type: DataTypes.STRING(50),
-        unique: true,
-        allowNull: false
-    },
-
-    owner_name: {
-        type: DataTypes.STRING(100),
-        allowNull: false
-    }, // Official name from RC
-
-    owner_father_name: {
-        type: DataTypes.STRING(100),
-    },
-
-    owner_count: {
-        type: DataTypes.INTEGER,
-        defaultValue: 1
-    },
-
-    rc_status: {
-        type: DataTypes.STRING(20),
-        defaultValue: "ACTIVE"
-    }, // e.g., ACTIVE, SUSPENDED
-
-    registration_date: {
-        type: DataTypes.DATEONLY
-    },
-
-    rc_expiry_date:
-    {
-        type: DataTypes.DATEONLY
-    },
-
-    vehicle_manufacturer_name: {
-        type: DataTypes.STRING(255)
-    },
-
-    reg_authority: {
-        type: DataTypes.STRING(100)
-    },
-
-    body_type: {
-        type: DataTypes.STRING(50)
-    }, // e.g., HATCHBACK, SUV
-
-    color: {
-        type: DataTypes.STRING(30)
-    },
-
-    seat_capacity: {
-        type: DataTypes.INTEGER
-    },
-
-    is_commercial: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false
-    },
-
-    insurance_company: {
-        type: DataTypes.STRING(100)
-    },
-
-    insurance_policy_no:
-    {
-        type: DataTypes.STRING(50)
-    },
-
-    insurance_expiry: {
-        type: DataTypes.DATEONLY
-    },
-
-    pucc_no: {
-        type: DataTypes.STRING(50)
-    },
-
-    pucc_expiry: {
-        type: DataTypes.DATEONLY
-    },
-
-    financer: {
-        type: DataTypes.STRING(100)
     },
 
     // MAnually entered by dealer
@@ -152,6 +48,21 @@ const Vehicle = seanebDB.define("vehicles", {
         type: DataTypes.TEXT
     },
 
+    listing_status: {
+        type: DataTypes.ENUM("DRAFT", "ACTIVE", "EXPIRED", "SOLD", "DEACTIVATED"),
+        defaultValue: "DRAFT"
+    },
+
+    published_at: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
+
+    expiry_date: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
+
 },
     {
         tableName: "vehicles",
@@ -159,20 +70,14 @@ const Vehicle = seanebDB.define("vehicles", {
         paranoid: true,
         createdAt: "created_at",
         updatedAt: "updated_at",
-        
+
         indexes: [
             //  Primary Foreign Keys
             { fields: ["branch_id"] },
-            { fields: ["brand_id"] },
-            { fields: ["model_id"] },
             { fields: ["category_id"] },
-            { fields: ["fuel_type_id"] },
 
             // Search Performance (New Columns)
             { fields: ["price"] },
-            { fields: ["registration_date"] }, // Replaced 'year'
-            { fields: ["rc_status"] },
-            { fields: ["is_commercial"] },
 
             // Date sorting
             { fields: ["created_at"] },
@@ -180,8 +85,11 @@ const Vehicle = seanebDB.define("vehicles", {
             // Advanced filters for the Dealer Dashboard
             { fields: ["branch_id", "category_id"] },
             { fields: ["category_id", "price"] },
+
+            { fields: ["rc_master_id"] }, // Index for fast joins
+            { fields: ["listing_status"] }
         ]
-    
+
     });
 
 export default Vehicle;
