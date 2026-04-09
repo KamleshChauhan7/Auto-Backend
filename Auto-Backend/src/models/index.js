@@ -29,10 +29,11 @@ import UserVehicleDealer from "./User.Vehicle.Dealer.js";
 
 import VehiclePermit from "./Vehicle.Permit.js";
 
-import CreditBalance from "./Credit_Balance.js";
-import CreditTransaction from "./Credit_Transaction.js";
+import CreditBalance from "./CreditBalance.js";
+import PaymentTransaction from "./PaymentTransaction.js";
 
 import RcVehicleMaster from "./RcVehicleMaster.js"
+
 
 
 // Branch -- Vehicles
@@ -164,15 +165,15 @@ Branches.hasOne(CreditBalance, { foreignKey: "branch_id" });
 CreditBalance.belongsTo(Branches, { foreignKey: "branch_id" });
 
 // Branch -- Credit Transactions
-Branches.hasMany(CreditTransaction, { foreignKey: "branch_id" });
-CreditTransaction.belongsTo(Branches, { foreignKey: "branch_id" });
+Branches.hasMany(PaymentTransaction, { foreignKey: "branch_id" });
+PaymentTransaction.belongsTo(Branches, { foreignKey: "branch_id" });
 
 // Vehicle -- Credit Transactions (for tracking which post used which credit)
-Vehicle.hasMany(CreditTransaction, { foreignKey: "vehicle_id" });
-CreditTransaction.belongsTo(Vehicle, { foreignKey: "vehicle_id" });
+Vehicle.hasMany(PaymentTransaction, { foreignKey: "vehicle_id" });
+PaymentTransaction.belongsTo(Vehicle, { foreignKey: "vehicle_id" });
 
-RcVehicleMaster.hasMany(Vehicle, {foreignKey: "rc_master_id",as: "listings"});
-Vehicle.belongsTo(RcVehicleMaster, {foreignKey: "rc_master_id",as: "rc_data"});
+RcVehicleMaster.hasMany(Vehicle, { foreignKey: "rc_master_id", as: "listings" });
+Vehicle.belongsTo(RcVehicleMaster, { foreignKey: "rc_master_id", as: "rc_data" });
 
 
 export {
@@ -211,9 +212,9 @@ export {
   UserVehicleDealer,
   UserVehicle,
 
-  CreditTransaction,
+  PaymentTransaction,
   CreditBalance,
 
-  RcVehicleMaster
+  RcVehicleMaster,
 
 };

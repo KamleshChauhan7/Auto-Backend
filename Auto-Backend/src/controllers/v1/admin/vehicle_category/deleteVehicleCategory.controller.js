@@ -1,23 +1,11 @@
-import { VehicleCategory } from "../../../../models/index.js";
+import { deleteVehicleCategoryService } from "../../../../services/admin/category/delete.category.service.js";
 
 export const deleteVehicleCategory = async (req, res, next) => {
     try {
 
         const { category_name } = req.params;
-        const formattedCategoryName = category_name.toLowerCase().trim();
 
-        const category = await VehicleCategory.findOne({
-            where: { category_name: formattedCategoryName }
-        });
-
-        if (!category) {
-            return res.status(404).json({
-                success: false,
-                message: `Vehicle category '${formattedCategoryName}' not found.`
-            });
-        }
-
-        await category.destroy();
+        await deleteVehicleCategoryService({category_name});
 
         return res.status(200).json({
             success: true,

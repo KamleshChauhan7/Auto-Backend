@@ -1,84 +1,60 @@
-import { Cashfree } from "cashfree-pg"; 
-import { createOrder } from "../../../services/payment/cashfree.service.js";
-
-import { PlanMaster, CreditTransaction, CreditBalance } from "../../../models/index.js";
-import seanebDB from "../../../config/db.js";
+import { PlanMaster, PaymentTransaction } from "../../../models/index.js"; 
+import { createCashfreeOrder } from "../../../vendors/cashfree/payment.vendor.js";
+import { ApiError } from "../../../errors/ApiError.js";
+import { ERROR_CODES } from "../../../errors/errorCodes.js";
 
 export const purchaseCredit = async (req, res, next) => {
     try {
-        const { credit_count, phone, customer_name } = req.body;
+        const { plan_name, credit_count, phone, customer_name } = req.body;
         const branch_id = req.branch?.branch_id;
 
-        if (!branch_id) return res.status(401).json({ success: false, message: "Unauthorized" });
+        if (!branch_id) throw new ApiError(ERROR_CODES.UNAUTHORIZED);
+        if (!plan_name || !credit_count || !phone) throw new ApiError(ERROR_CODES.REQUIRED_FIELDS_MISSING);
 
-        const currentPlan = await PlanMaster.findOne({ where: { is_active: true } });
-        const totalAmount = parseFloat(currentPlan.price) * parseInt(credit_count);
-
-        const pendingTx = await CreditTransaction.create({
-            branch_id,
-            type: "TOPUP",
-            credits: credit_count,
-            amount_paid: totalAmount,
-            remarks: "PENDING" 
+        // Fetch Plan Details
+        const formattedPlanName = plan_name.toLowerCase().trim();
+        const plan = await PlanMaster.findOne({ 
+            where: { plan_name: formattedPlanName, is_active: true } 
         });
 
-        const cashfreeData = await createOrder(
-            pendingTx.transaction_id, 
-            totalAmount, 
-            branch_id, 
-            phone,
-            customer_name
-        );
+        if (!plan) throw new ApiError(ERROR_CODES.PLAN_NOT_FOUND);
+
+        // Calculate Total
+        const totalAmount = parseFloat(plan.price) * parseInt(credit_count);
+        const orderId = `ORD_${Date.now()}`;
+
+        // Create Pending Order in  PaymentTransaction 
+        const newOrder = await PaymentTransaction.create({
+            order_id: orderId,
+            branch_id,
+            order_type: 'CREDIT_PACK',           // For why this transaction
+            reference_id: plan.plan_id,          // Plan Id
+            credit_count: parseInt(credit_count),
+            validity_days: plan.duration_days,
+            total_amount: totalAmount,
+            payment_status: 'PENDING'            //Payment status
+        });
+
+        // Hit Cashfree API via Vendor
+        const orderResponse = await createCashfreeOrder({
+            order_id: orderId,
+            order_amount: totalAmount,
+            customer_id: branch_id.substring(0, 30), // Cashfree limits ID length
+            customer_phone: phone,
+            customer_name: customer_name
+        });
+
+        // Update the database with the session ID so the frontend can trigger the popup
+        await newOrder.update({ payment_session_id: orderResponse.payment_session_id });
 
         return res.status(200).json({
             success: true,
-            data: {
-                payment_session_id: cashfreeData.payment_session_id,
-                order_id: pendingTx.transaction_id
-            }
+            message: "Credit order created successfully",
+            payment_session_id: orderResponse.payment_session_id,
+            order_id: orderResponse.order_id,
+            amount: totalAmount
         });
-    } catch (error) {
-        next(error);
-    }
-};
 
-export const verifyPayment = async (req, res, next) => {
-    const { order_id } = req.body;
-
-    try {
-     
-        const response = await Cashfree.PGOrderFetchPayments("2023-08-01", order_id);
-        const payments = response.data || [];
-        const successPayment = payments.find(p => p.payment_status === "SUCCESS");
-
-        if (!successPayment) {
-            return res.status(400).json({ success: false, message: "Payment not successful" });
-        }
-
-        const t = await seanebDB.transaction();
-        try {
-            const txRecord = await CreditTransaction.findByPk(order_id, { transaction: t });
-
-            if (!txRecord || txRecord.remarks === "SUCCESS") {
-                await t.rollback();
-                return res.status(400).json({ success: false, message: "Already processed" });
-            }
-
-            const [balance] = await CreditBalance.findOrCreate({
-                where: { branch_id: txRecord.branch_id },
-                defaults: { available_credits: 0 },
-                transaction: t
-            });
-
-            await balance.increment('available_credits', { by: txRecord.credits, transaction: t });
-            await txRecord.update({ remarks: "SUCCESS" }, { transaction: t });
-
-            await t.commit();
-            res.status(200).json({ success: true, message: "Credits Added!" });
-        } catch (err) {
-            await t.rollback();
-            throw err;
-        }
     } catch (error) {
         next(error);
     }

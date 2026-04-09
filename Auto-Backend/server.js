@@ -14,7 +14,7 @@ const startServer = async () => {
         await seanebDB.authenticate();
 
         if (process.env.NODE_ENV !== "production") {
-            await seanebDB.sync();
+            await seanebDB.sync({alter:true});
 
         }
         app.listen(PORT,`0.0.0.0`, () => { //sharing server in same wifi

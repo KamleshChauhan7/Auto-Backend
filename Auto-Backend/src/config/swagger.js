@@ -11,7 +11,7 @@ export const setupSwagger = (app) => {
     },
     servers: [
       {
-        url: "http://192.168.0.156:9495",
+        url: "http://192.168.0.153:9495",
         description: "Remote API Gateway (Port 9495)",
       },
       // {

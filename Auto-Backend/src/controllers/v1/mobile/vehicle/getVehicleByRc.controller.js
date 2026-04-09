@@ -3,7 +3,7 @@ import {
     RcVehicleMaster, VehicleBrand, VehicleCategory,
     VehicleFuelType, VehicleModel, VehicleImages, VehiclePermit
 } from "../../../../models/index.js";
-import { fetchRCDetailsFromCashfree } from "../../../../services/vehicle/get.vehicle.data.RC.js";
+import { fetchRCDetailsFromCashfree } from "../../../../vendors/cashfree/get.vehicle.data.vendors.js";
 import { ApiError } from "../../../../errors/ApiError.js";
 import { ERROR_CODES } from "../../../../errors/errorCodes.js";
 
